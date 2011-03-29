@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>iwein.samples</groupId>
     <artifactId>testing-messaging</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
     <name>testing-messaging</name>
     <properties>
@@ -12,6 +12,7 @@
         <spring.version>3.0.5.RELEASE</spring.version>
         <spring.integration.version>2.0.3.RELEASE</spring.integration.version>
         <hamcrest.version>1.1</hamcrest.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -69,6 +70,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>1.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.7.5</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- TEST dependencies -->
