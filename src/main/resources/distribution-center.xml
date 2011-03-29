@@ -11,15 +11,17 @@
 
     <channel id="orders"/>
 
-    <bridge id="orderSplitter" input-channel="orders" output-channel="itemReferences"/>
+    <splitter id="orderSplitter" input-channel="orders" output-channel="itemReferences" expression="payload.items"/>
 
     <channel id="itemReferences"/>
 
-    <bridge id="itemPicker" input-channel="itemReferences" output-channel="items"/>
+    <service-activator id="itemPicker" input-channel="itemReferences" output-channel="items"
+                       expression="new iwein.samples.distributioncenter.Item(payload.name)"/>
 
     <channel id="items"/>
 
-    <bridge id="deliveryPackager" input-channel="items" output-channel="deliveries"/>
+    <aggregator id="deliveryPackager" input-channel="items" output-channel="deliveries"
+                expression="new iwein.samples.distributioncenter.Delivery(#this.![payload])"/>
 
     <channel id="deliveries"/>
 

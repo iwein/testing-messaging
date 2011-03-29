@@ -1,22 +1,19 @@
 package iwein.samples.distributioncenter;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.core.PollableChannel;
-import org.springframework.integration.core.SubscribableChannel;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -47,9 +44,30 @@ public class DistributionCenterTest {
 
     @Test
     public void shouldPassOrderThroughSystem() throws Exception {
-        Message<?> message = MessageBuilder.withPayload("foo").build();
+        ItemReference item1 = new ItemReference("foo");
+        ItemReference item2 = new ItemReference("bar");
+        Order order = new Order(item1, item2);
+        Message<?> message = MessageBuilder.withPayload(order).build();
         orders.send(message);
-        assertThat(passedOrders.receive().getPayload(), is(message.getPayload()));
+        assertThat((Delivery) passedOrders.receive().getPayload(), hasItemNamed("foo"));
+    }
+
+    private Matcher<Delivery> hasItemNamed(final String itemName) {
+        return new BaseMatcher<Delivery>() {
+            @Override
+            public boolean matches(Object o) {
+                if(o instanceof Delivery){
+                    return ((Delivery)o).getItems().contains(new Item(itemName));
+                }
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("A delivery containing an item named ");
+                description.appendValue(itemName);
+            }
+        };
     }
 
 }
